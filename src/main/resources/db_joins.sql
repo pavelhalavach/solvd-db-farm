@@ -15,6 +15,17 @@ USE farm;
 -- FROM responsibilities AS resp
 -- RIGHT JOIN roles ON  resp.role_id = roles.id; 
 
+SELECT 
+	roles.profession AS worker_profession, 
+	resp.task AS worker_task, 
+    resp.description AS task_description,
+    w.id,
+    w.first_name
+FROM responsibilities AS resp
+LEFT JOIN worker_responsibilities AS wr ON resp.id = wr.responsibility_id
+LEFT JOIN workers AS w ON wr.worker_id = w.id
+RIGHT JOIN roles ON  resp.role_id = roles.id; 
+
 -- SELECT   
 --     farms.name AS farm_name,
 --     f.area_in_acres AS field_area_in_acres,
@@ -23,11 +34,11 @@ USE farm;
 -- INNER JOIN farms ON f.farm_id = farms.id
 -- INNER JOIN crops AS c ON f.crop_id = c.id;
 
-SELECT 
-	b.name AS building_name,
-    bt.type AS building_type
-FROM buildings AS b
-INNER JOIN building_types AS bt ON b.building_type_id = bt.id;
+-- SELECT 
+-- 	b.name AS building_name,
+--     bt.type AS building_type
+-- FROM buildings AS b
+-- INNER JOIN building_types AS bt ON b.building_type_id = bt.id;
 
 
 

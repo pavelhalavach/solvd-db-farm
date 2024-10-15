@@ -18,11 +18,6 @@ public class ConnectionPool {
     private List<Connection> connectionsInUse;
     private static ConnectionPool INSTANCE;
 
-//    private ConnectionPool(int size, String url) {
-//        this.size = size;
-//        this.url = url;
-//    }
-
     public static ConnectionPool getInstance(){
         if (INSTANCE == null){
             INSTANCE = new ConnectionPool();
@@ -34,8 +29,7 @@ public class ConnectionPool {
         if (availableConnections == null) {
             availableConnections = new ArrayList<>();
             for (int i = 0; i < size; i++) {
-                try(java.sql.Connection con = DriverManager
-                        .getConnection(url, user, password)){
+                try(java.sql.Connection con = DriverManager.getConnection(url, user, password)){
                     availableConnections.add(con);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -43,9 +37,6 @@ public class ConnectionPool {
             }
             connectionsInUse = new ArrayList<>();
         }
-//        if (availableConnections.isEmpty()) {
-//            return null;
-//        }
         Connection connection = availableConnections.removeLast();
         connectionsInUse.add(connection);
         return connection;
