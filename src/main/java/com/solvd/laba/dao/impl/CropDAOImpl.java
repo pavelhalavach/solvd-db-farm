@@ -10,15 +10,23 @@ import java.util.List;
 
 public class CropDAOImpl implements CropDAO {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private static final String INSERT = "INSERT INTO crops VALUES (?,?,?)";
+    private static final String INSERT = "INSERT INTO crops(" +
+            "name, date_to_seed, date_to_harvest" +
+            ") " +
+            "VALUES (?,?,?)";
+    private static final String UPDATE = "UPDATE crops " +
+            "SET name = ?, date_to_seed = ?, date_to_harvest = ?" +
+            "WHERE id = ?";
+    private static final String DELETE_BY_NAME = "DELETE FROM crops " +
+            "WHERE name = ?";
     private static final String SELECT_ALL = "SELECT * FROM crops";
     private static final String SELECT_BY_ID = "SELECT " +
             "c.id AS crop_id, " +
             "c.name AS crop_name, " +
             "c.date_to_seed AS seeding_date, " +
             "c.date_to_harvest AS harvesting_date " +
-            "FROM crops AS c" +
-            "WHERE crop_id = (?)";
+            "FROM crops AS c " +
+            "WHERE crop_id = ?";
 
     @Override
     public void insert(Crop crop) {
@@ -41,7 +49,38 @@ public class CropDAOImpl implements CropDAO {
     }
 
     @Override
-    public Crop getById(Integer id) {
+    public void update(Crop crop){
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
+            preparedStatement.setString(1, crop.getName());
+            preparedStatement.setDate(2, Date.valueOf(crop.getDateToSeed()));
+            preparedStatement.setDate(3, Date.valueOf(crop.getDateToHarvest()));
+            preparedStatement.setInt(4, crop.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            connectionPool.releaseConnection();
+        }
+    }
+
+    @Override
+    public void deleteByName(String name){
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_NAME)){
+            preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            connectionPool.releaseConnection();
+        }
+    }
+
+    @Override
+    public Crop getById(int id) {
         Crop crop;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
@@ -61,8 +100,8 @@ public class CropDAOImpl implements CropDAO {
     public List<Crop> getAll() {
         List<Crop> crops;
         Connection connection = connectionPool.getConnection();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL)){
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try(Statement statement = connection.createStatement()){
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL);
             crops = mapCrops(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,7 +112,7 @@ public class CropDAOImpl implements CropDAO {
         return crops;
     }
 
-    private Crop mapCrop(ResultSet resultSet) throws SQLException {
+    public static Crop mapCrop(ResultSet resultSet) throws SQLException {
         Crop crop = null;
         int id = resultSet.getInt("crop_id");
         if (id != 0){
@@ -86,12 +125,11 @@ public class CropDAOImpl implements CropDAO {
         return crop;
     }
 
-    private List<Crop> mapCrops(ResultSet resultSet) throws SQLException {
+    public static List<Crop> mapCrops(ResultSet resultSet) throws SQLException {
         List<Crop> crops = new ArrayList<>();
         while (resultSet.next()){
             crops.add(mapCrop(resultSet));
         }
-
         return crops;
     }
 }

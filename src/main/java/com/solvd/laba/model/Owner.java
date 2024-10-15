@@ -1,13 +1,9 @@
 package com.solvd.laba.model;
 
 import lombok.Data;
-import lombok.NonNull;
 
 @Data public class Owner {
-    @NonNull
-    private Integer id;
-    @NonNull
+    private int id;
     private String firstName;
-    @NonNull
     private String secondName;
 }

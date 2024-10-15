@@ -27,6 +27,9 @@ VALUES
 	('Adam', 'Higgs', 1),
     ('Boris', 'Red', 1);
     
+INSERT INTO worker_responsibilities (worker_id, responsibility_id)
+VALUES (1, 1), (2, 2);
+    
 INSERT INTO crops (name)
 VALUES
 	('wheat'),
