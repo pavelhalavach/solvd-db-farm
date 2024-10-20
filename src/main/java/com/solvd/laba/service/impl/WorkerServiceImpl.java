@@ -2,6 +2,7 @@ package com.solvd.laba.service.impl;
 
 import com.solvd.laba.dao.WorkerDAO;
 import com.solvd.laba.dao.impl.WorkerDAOImpl;
+import com.solvd.laba.model.Responsibility;
 import com.solvd.laba.model.Worker;
 import com.solvd.laba.service.ResponsibilityService;
 import com.solvd.laba.service.WorkerService;
@@ -24,9 +25,19 @@ public class WorkerServiceImpl implements WorkerService {
         workerDAO.insert(worker, farmId);
     }
 
+
+//    not working yet
     @Override
-    public void update(Worker worker) {
-        workerDAO.update(worker);
+    public void update(Worker worker, int farmId) {
+        if (getById(worker.getId()) != null) {
+            List<Responsibility> newResponsibilities = worker.getResponsibilities();
+            List<Responsibility> oldResponsibilities = getById(worker.getId()).getResponsibilities();
+            newResponsibilities.stream()
+                    .filter(newRes -> !oldResponsibilities.contains(newRes))
+                    .forEach(responsibilityService::insert);
+
+            workerDAO.update(worker, farmId);
+        }
     }
 
     @Override

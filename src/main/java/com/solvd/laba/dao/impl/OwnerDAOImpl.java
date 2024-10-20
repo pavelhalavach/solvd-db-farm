@@ -12,28 +12,53 @@ public class OwnerDAOImpl implements OwnerDAO {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String INSERT = "INSERT INTO owners (" +
             "first_name, second_name" +
-            ") VALUES (?,?)";
+            ") VALUES (?,?) " +
+            "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
+    private static final String UPDATE = "UPDATE owners SET first_name = ?, second_name = ? " +
+            "WHERE id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM owners " +
             "WHERE id = ?";
-    private static final String SELECT_ALL = "SELECT * FROM owners";
+    private static final String SELECT_ALL = "SELECT " +
+            "id AS owner_id, " +
+            "first_name AS owner_first_name, " +
+            "second_name AS owner_second_name " +
+            "FROM owners " +
+            "ORDER BY id";
     private static final String SELECT_BY_ID = "SELECT " +
             "id AS owner_id, " +
-            "first_name, " +
-            "second_name, " +
+            "first_name AS owner_first_name, " +
+            "second_name AS owner_second_name " +
             "FROM owners " +
-            "WHERE owner_id = ?";
+            "WHERE id = ?";
 
     @Override
     public void insert(Owner owner) {
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT)){
             preparedStatement.setString(1, owner.getFirstName());
-            preparedStatement.setString(1, owner.getSecondName());
+            preparedStatement.setString(2, owner.getSecondName());
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.executeQuery(SELECT_ALL);
-            resultSet.last();
-            owner.setId(resultSet.getInt(1));
+            ResultSet resultSet = preparedStatement.executeQuery("SELECT LAST_INSERT_ID()");
+            if (resultSet.next()) {
+                owner.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            connectionPool.releaseConnection();
+        }
+    }
+
+    @Override
+    public void update(Owner owner) {
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
+            preparedStatement.setString(1, owner.getFirstName());
+            preparedStatement.setString(2, owner.getSecondName());
+            preparedStatement.setInt(3, owner.getId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -58,12 +83,14 @@ public class OwnerDAOImpl implements OwnerDAO {
 
     @Override
     public Owner getById(int id) {
-        Owner owner;
+        Owner owner = null;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            owner = mapOwner(resultSet);
+            if (resultSet.next()) {
+                owner = mapOwner(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,8 +122,8 @@ public class OwnerDAOImpl implements OwnerDAO {
         if (id != 0){
             owner = new Owner();
             owner.setId(id);
-            owner.setFirstName(resultSet.getString("first_name"));
-            owner.setSecondName(resultSet.getString("second_name"));
+            owner.setFirstName(resultSet.getString("owner_first_name"));
+            owner.setSecondName(resultSet.getString("owner_second_name"));
         }
         return owner;
     }

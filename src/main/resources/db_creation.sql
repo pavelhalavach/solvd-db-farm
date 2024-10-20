@@ -8,14 +8,16 @@ CREATE TABLE farms (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(45) NOT NULL UNIQUE,          
     location VARCHAR(255),
-    owner_id INT NOT NULL
+    owner_id INT NOT NULL,
+    UNIQUE(name, location)
 );
 
 DROP TABLE IF EXISTS owners;
 CREATE TABLE owners (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(45) NOT NULL,          
-    second_name VARCHAR(45)  NOT NULL
+    second_name VARCHAR(45)  NOT NULL,
+    UNIQUE(first_name, second_name)
 );
 
 DROP TABLE IF EXISTS workers;
@@ -23,7 +25,8 @@ CREATE TABLE workers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(45) NOT NULL,          
     second_name VARCHAR(45) NOT NULL,
-    farm_id INT NOT NULL
+    farm_id INT NOT NULL,
+    UNIQUE(first_name, second_name)
 );
 
 DROP TABLE IF EXISTS responsibilities;
@@ -31,16 +34,18 @@ CREATE TABLE responsibilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     task VARCHAR(45) NOT NULL,          
     description VARCHAR(225),
-    role_id INT NOT NULL
+    role_id INT NOT NULL,
+    UNIQUE(task, description, role_id)
 );
 
 DROP TABLE IF EXISTS worker_responsibilities;
 CREATE TABLE worker_responsibilities (
 	responsibility_id INT,
     worker_id INT,
+    UNIQUE(responsibility_id, worker_id),
     PRIMARY KEY (responsibility_id, worker_id),
     FOREIGN KEY (responsibility_id) REFERENCES responsibilities(id),
-    FOREIGN KEY (worker_id) REFERENCES workers(id)
+    FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS roles;
@@ -52,10 +57,11 @@ CREATE TABLE roles (
 DROP TABLE IF EXISTS fields;
 CREATE TABLE fields (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    area_in_acres DOUBLE,          
+    area_in_acres DECIMAL(3,1),          
     coordinates VARCHAR(225),
     farm_id INT,
-    crop_id INT
+    crop_id INT,
+    UNIQUE(area_in_acres, coordinates)
 );
 
 DROP TABLE IF EXISTS crops;
@@ -127,11 +133,11 @@ CREATE TABLE animals (
 
 ALTER TABLE farms
 ADD CONSTRAINT fk_owner
-FOREIGN KEY (owner_id) REFERENCES owners(id);
+FOREIGN KEY (owner_id) REFERENCES owners(id) ON DELETE CASCADE;
 
 ALTER TABLE workers
 ADD CONSTRAINT fk_farm_worker
-FOREIGN KEY (farm_id) REFERENCES farms(id);
+FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE responsibilities
 ADD CONSTRAINT fk_role_responsibility
@@ -139,7 +145,7 @@ FOREIGN KEY (role_id) REFERENCES roles(id);
 
 ALTER TABLE fields
 ADD CONSTRAINT fk_farm_field
-FOREIGN KEY (farm_id) REFERENCES farms(id);
+FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE fields
 ADD CONSTRAINT fk_crop_field
@@ -147,7 +153,7 @@ FOREIGN KEY (crop_id) REFERENCES crops(id);
 
 ALTER TABLE buildings
 ADD CONSTRAINT fk_farm_building
-FOREIGN KEY (farm_id) REFERENCES farms(id);
+FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE buildings
 ADD CONSTRAINT fk_building_type_building
@@ -155,7 +161,7 @@ FOREIGN KEY (building_type_id) REFERENCES building_types(id);
 
 ALTER TABLE building_vehicle_storages
 ADD CONSTRAINT fk_building_vehicle_storage
-FOREIGN KEY (building_id) REFERENCES buildings(id);
+FOREIGN KEY (building_id) REFERENCES buildings(id) ON DELETE CASCADE;
 
 ALTER TABLE building_vehicle_storages
 ADD CONSTRAINT fk_vehicle_vehicle_storage
@@ -163,7 +169,7 @@ FOREIGN KEY (vehicle_id) REFERENCES vehicles(id);
 
 ALTER TABLE building_tool_storages
 ADD CONSTRAINT fk_building_tool_storage
-FOREIGN KEY (building_id) REFERENCES buildings(id);
+FOREIGN KEY (building_id) REFERENCES buildings(id) ON DELETE CASCADE;
 
 ALTER TABLE building_tool_storages
 ADD CONSTRAINT fk_tool_tool_storage
@@ -171,7 +177,7 @@ FOREIGN KEY (tool_id) REFERENCES tools(id);
 
 ALTER TABLE building_animal_storages
 ADD CONSTRAINT fk_building_animal_storage
-FOREIGN KEY (building_id) REFERENCES buildings(id);
+FOREIGN KEY (building_id) REFERENCES buildings(id) ON DELETE CASCADE;
 
 ALTER TABLE building_animal_storages
 ADD CONSTRAINT fk_animal_animal_storage

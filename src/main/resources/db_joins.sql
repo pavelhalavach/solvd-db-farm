@@ -19,7 +19,8 @@ SELECT
 	roles.profession AS worker_profession, 
 	resp.task AS worker_task, 
     resp.description AS task_description,
-    w.id,
+    resp.id AS resp_id,
+    w.id AS worker_id,
     w.first_name
 FROM responsibilities AS resp
 LEFT JOIN worker_responsibilities AS wr ON resp.id = wr.responsibility_id

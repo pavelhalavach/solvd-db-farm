@@ -3,6 +3,7 @@ package com.solvd.laba.dao.impl;
 import com.solvd.laba.dao.ConnectionPool;
 import com.solvd.laba.dao.ResponsibilityDAO;
 import com.solvd.laba.model.Responsibility;
+import com.solvd.laba.model.Worker;
 
 
 import java.sql.*;
@@ -11,9 +12,10 @@ import java.util.List;
 
 public class ResponsibilityDAOImpl implements ResponsibilityDAO {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private static final String INSERT = "INSERT INTO responsibilities (task, description, role_id) VALUES (?,?,?)";
+    private static final String INSERT = "INSERT INTO responsibilities (task, description, role_id) VALUES (?,?,?) " +
+            "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
     private static final String UPDATE = "UPDATE responsibilities " +
-            "SET task = ?, description = ?, role_id = ?" +
+            "SET task = ?, description = ?, role_id = ? " +
             "WHERE id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM responsibilities WHERE id = ?";
     private static final String SELECT_ALL = "SELECT " +
@@ -22,36 +24,39 @@ public class ResponsibilityDAOImpl implements ResponsibilityDAO {
             "re.description AS responsibility_description, " +
             "re.role_id AS role_id, " +
             "r.profession AS role_profession " +
-            "FROM responsibilities AS re" +
-            "LEFT JOIN roles AS r ON role_id = r.id";
+            "FROM responsibilities AS re " +
+            "LEFT JOIN roles AS r ON role_id = r.id " +
+            "ORDER BY re.id";
     private static final String SELECT_BY_ID = "SELECT " +
             "re.id AS responsibility_id, " +
             "re.task as responsibility_task, " +
             "re.description AS responsibility_description, " +
             "re.role_id AS role_id, " +
             "r.profession AS role_profession " +
-            "FROM responsibilities AS re" +
-            "LEFT JOIN roles AS r ON role_id = r.id AND responsibility_id = ?";
+            "FROM responsibilities AS re " +
+            "LEFT JOIN roles AS r ON role_id = r.id " +
+            "WHERE re.id = ?";
     
     @Override
     public void insert(Responsibility responsibility) {
-        Connection connection = connectionPool.getConnection();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT)){
-            preparedStatement.setString(1, responsibility.getTask());
-            preparedStatement.setString(2, responsibility.getDescription());
-            preparedStatement.setInt(3, responsibility.getRole().getId());
+            Connection connection = connectionPool.getConnection();
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT)) {
+                preparedStatement.setString(1, responsibility.getTask());
+                preparedStatement.setString(2, responsibility.getDescription());
+                preparedStatement.setInt(3, responsibility.getRole().getId());
 
-            preparedStatement.executeUpdate();
+                preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.executeQuery("SELECT * FROM responsibilities");
-            resultSet.last();
-            responsibility.setId(resultSet.getInt(1));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        finally {
-            connectionPool.releaseConnection();
-        }
+                ResultSet resultSet = preparedStatement.executeQuery("SELECT LAST_INSERT_ID()");
+                if (resultSet.next()) {
+                    responsibility.setId(resultSet.getInt(1));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                connectionPool.releaseConnection();
+            }
     }
 
     @Override
@@ -87,12 +92,14 @@ public class ResponsibilityDAOImpl implements ResponsibilityDAO {
 
     @Override
     public Responsibility getById(int id) {
-        Responsibility responsibility;
+        Responsibility responsibility = null;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            responsibility = mapResponsibility(resultSet);
+            if (resultSet.next()) {
+                responsibility = mapResponsibility(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -139,3 +146,4 @@ public class ResponsibilityDAOImpl implements ResponsibilityDAO {
         return responsibilities;
     }
 }
+

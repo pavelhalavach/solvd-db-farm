@@ -10,26 +10,53 @@ import java.util.List;
 
 public class RoleDAOImpl implements RoleDAO {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private static final String INSERT = "INSERT INTO roles (profession) VALUES (?)";
+    private static final String INSERT = "INSERT INTO roles (profession) VALUES (?) " +
+            "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
+    private static final String UPDATE = "UPDATE roles SET profession = ? " +
+            "WHERE id = ?";
     private static final String DELETE_BY_PROFESSION = "DELETE FROM roles WHERE profession = ?";
-    private static final String SELECT_ALL = "SELECT id AS role_id, profession as role_profession FROM roles";
+    private static final String SELECT_ALL = "SELECT id AS role_id, profession as role_profession FROM roles " +
+            "ORDER BY id";
     private static final String SELECT_BY_ID = "SELECT " +
             "id AS role_id, " +
-            "profession AS role_profession, " +
+            "profession AS role_profession " +
             "FROM roles " +
-            "WHERE role_id = ?";
+            "WHERE id = ?";
+
+    private static final String SELECT_BY_PROFESSION = "SELECT " +
+            "id AS role_id, " +
+            "profession AS role_profession " +
+            "FROM roles " +
+            "WHERE profession = ?";
 
     @Override
     public void insert(Role role) {
         Connection connection = connectionPool.getConnection();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT)) {
             preparedStatement.setString(1, role.getProfession());
 
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.executeQuery(SELECT_ALL);
-            resultSet.last();
-            role.setId(resultSet.getInt(1));
+            ResultSet resultSet = preparedStatement.executeQuery("SELECT LAST_INSERT_ID()");
+
+            if (resultSet.next()) {
+                role.setId(resultSet.getInt(1));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            connectionPool.releaseConnection();
+        }
+    }
+
+    @Override
+    public void update(Role role) {
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
+            preparedStatement.setString(1, role.getProfession());
+            preparedStatement.setInt(2, role.getId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -54,12 +81,33 @@ public class RoleDAOImpl implements RoleDAO {
 
     @Override
     public Role getById(int id) {
-        Role role;
+        Role role = null;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            role = mapRole(resultSet);
+            if(resultSet.next()) {
+                role = mapRole(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            connectionPool.releaseConnection();
+        }
+        return role;
+    }
+
+    @Override
+    public Role getByProfession(String profession) {
+        Role role = null;
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_PROFESSION)){
+            preparedStatement.setString(1, profession);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                role = mapRole(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -87,8 +135,9 @@ public class RoleDAOImpl implements RoleDAO {
 
     public static Role mapRole(ResultSet resultSet) throws SQLException {
         Role role = null;
+
         int id = resultSet.getInt("role_id");
-        if (id != 0){
+        if (id > 0){
             role = new Role();
             role.setId(id);
             role.setProfession(resultSet.getString("role_profession"));
