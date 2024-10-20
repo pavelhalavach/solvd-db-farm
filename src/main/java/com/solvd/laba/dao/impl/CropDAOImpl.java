@@ -13,33 +13,49 @@ public class CropDAOImpl implements CropDAO {
     private static final String INSERT = "INSERT INTO crops(" +
             "name, date_to_seed, date_to_harvest" +
             ") " +
-            "VALUES (?,?,?)";
+            "VALUES (?,?,?) " +
+            "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
     private static final String UPDATE = "UPDATE crops " +
             "SET name = ?, date_to_seed = ?, date_to_harvest = ?" +
             "WHERE id = ?";
     private static final String DELETE_BY_NAME = "DELETE FROM crops " +
             "WHERE name = ?";
-    private static final String SELECT_ALL = "SELECT * FROM crops";
+    private static final String SELECT_ALL = "SELECT " +
+            "c.id AS crop_id, " +
+            "c.name AS crop_name, " +
+            "c.date_to_seed AS crop_seeding_date, " +
+            "c.date_to_harvest AS crop_harvesting_date " +
+            "FROM crops AS c " +
+            "ORDER BY c.id";
     private static final String SELECT_BY_ID = "SELECT " +
             "c.id AS crop_id, " +
             "c.name AS crop_name, " +
-            "c.date_to_seed AS seeding_date, " +
-            "c.date_to_harvest AS harvesting_date " +
+            "c.date_to_seed AS crop_seeding_date, " +
+            "c.date_to_harvest AS crop_harvesting_date " +
             "FROM crops AS c " +
-            "WHERE crop_id = ?";
+            "WHERE c.id = ?";
+
+    private static final String SELECT_BY_NAME = "SELECT " +
+            "c.id AS crop_id, " +
+            "c.name AS crop_name, " +
+            "c.date_to_seed AS crop_seeding_date, " +
+            "c.date_to_harvest AS crop_harvesting_date " +
+            "FROM crops AS c " +
+            "WHERE c.name = ?";
 
     @Override
     public void insert(Crop crop) {
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT)){
             preparedStatement.setString(1, crop.getName());
-            preparedStatement.setDate(2, Date.valueOf(crop.getDateToSeed()));
-            preparedStatement.setDate(3, Date.valueOf(crop.getDateToHarvest()));
+            preparedStatement.setDate(2, crop.getDateToSeed());
+            preparedStatement.setDate(3, crop.getDateToHarvest());
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.executeQuery(SELECT_ALL);
-            resultSet.last();
-            crop.setId(resultSet.getInt(1));
+            ResultSet resultSet = preparedStatement.executeQuery("SELECT LAST_INSERT_ID()");
+            if (resultSet.next()) {
+                crop.setId(resultSet.getInt(1));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -53,8 +69,8 @@ public class CropDAOImpl implements CropDAO {
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
             preparedStatement.setString(1, crop.getName());
-            preparedStatement.setDate(2, Date.valueOf(crop.getDateToSeed()));
-            preparedStatement.setDate(3, Date.valueOf(crop.getDateToHarvest()));
+            preparedStatement.setDate(2, crop.getDateToSeed());
+            preparedStatement.setDate(3, crop.getDateToHarvest());
             preparedStatement.setInt(4, crop.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -81,12 +97,33 @@ public class CropDAOImpl implements CropDAO {
 
     @Override
     public Crop getById(int id) {
-        Crop crop;
+        Crop crop = null;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            crop = mapCrop(resultSet);
+            if (resultSet.next()) {
+                crop = mapCrop(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            connectionPool.releaseConnection();
+        }
+        return crop;
+    }
+
+    @Override
+    public Crop getByName(String name) {
+        Crop crop = null;
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_NAME)){
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                crop = mapCrop(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -119,8 +156,8 @@ public class CropDAOImpl implements CropDAO {
             crop = new Crop();
             crop.setId(id);
             crop.setName(resultSet.getString("crop_name"));
-            crop.setDateToSeed(resultSet.getDate("seeding_date").toLocalDate());
-            crop.setDateToHarvest(resultSet.getDate("harvesting_date").toLocalDate());
+            crop.setDateToSeed(resultSet.getDate("crop_seeding_date"));
+            crop.setDateToHarvest(resultSet.getDate("crop_harvesting_date"));
         }
         return crop;
     }

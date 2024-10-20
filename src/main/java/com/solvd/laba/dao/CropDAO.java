@@ -9,5 +9,8 @@ public interface CropDAO {
     void update(Crop crop);
     void deleteByName(String name);
     Crop getById(int id);
+
+    Crop getByName(String name);
+
     List<Crop> getAll();
 }

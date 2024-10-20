@@ -13,10 +13,11 @@ public class FieldDAOImpl implements FieldDAO {
     private static final String INSERT = "INSERT INTO fields (" +
             "area_in_acres, coordinates, farm_id, crop_id" +
             ") " +
-            "VALUES (?,?,?,?)";
+            "VALUES (?,?,?,?) " +
+            "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), farm_id = VALUES(farm_id), crop_id = VALUES(crop_id)";
     private static final String DELETE_BY_ID = "DELETE FROM fields " +
             "WHERE id = ?";
-    private static final String SELECT_ALL = "SELECT * FROM fields";
+    private static final String SELECT_ALL = "SELECT * FROM fields ORDER BY id";
     private static final String SELECT_BY_ID = "SELECT " +
             "f.id AS field_id, " +
             "f.area_in_acres AS field_area_in_acres, " +
@@ -27,7 +28,9 @@ public class FieldDAOImpl implements FieldDAO {
             "c.date_to_seed AS crop_seeding_date, " +
             "c.date_to_harvest AS crop_harvesting_date " +
             "FROM fields AS f " +
-            "LEFT JOIN crops AS c ON crop_id = c.id AND field_id = ?";
+            "LEFT JOIN crops AS c ON crop_id = c.id " +
+            "WHERE f.id = ? " +
+            "ORDER BY f.id";
 
     private static final String SELECT_BY_FARM_ID = "SELECT " +
             "f.id AS field_id, " +
@@ -36,10 +39,11 @@ public class FieldDAOImpl implements FieldDAO {
             "f.farm_id AS farm_id, " +
             "f.crop_id AS crop_id, " +
             "c.name AS crop_name, " +
-            "c.date_to_seed AS seeding_date, " +
-            "c.date_to_harvest AS harvesting_date " +
-            "FROM fields " +
-            "LEFT JOIN crops AS c ON fields.crop_id = c.id AND farm_id = ?";
+            "c.date_to_seed AS crop_seeding_date, " +
+            "c.date_to_harvest AS crop_harvesting_date " +
+            "FROM fields AS f " +
+            "LEFT JOIN crops AS c ON f.crop_id = c.id " +
+            "WHERE farm_id = ?";
 
     @Override
     public void insert(Field field, int farmId) {
@@ -51,9 +55,10 @@ public class FieldDAOImpl implements FieldDAO {
             preparedStatement.setInt(4, field.getCrop().getId());
             preparedStatement.executeUpdate();
 
-            ResultSet resultSet = preparedStatement.executeQuery(SELECT_ALL);
-            resultSet.last();
-            field.setId(resultSet.getInt(1));
+            ResultSet resultSet = preparedStatement.executeQuery("SELECT LAST_INSERT_ID()");
+            if (resultSet.next()) {
+                field.setId(resultSet.getInt(1));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -78,12 +83,14 @@ public class FieldDAOImpl implements FieldDAO {
 
     @Override
     public Field getById(int id) {
-        Field field;
+        Field field = null;
         Connection connection = connectionPool.getConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            field = mapField(resultSet);
+            if (resultSet.next()) {
+                field = mapField(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

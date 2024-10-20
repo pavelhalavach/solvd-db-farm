@@ -27,6 +27,9 @@ public class ResponsibilityServiceImpl implements ResponsibilityService {
 
     @Override
     public void update(Responsibility responsibility) {
+        if (responsibility.getRole() != null){
+            roleService.insert(responsibility.getRole());
+        }
         responsibilityDAO.update(responsibility);
     }
 

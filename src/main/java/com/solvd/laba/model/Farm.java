@@ -11,5 +11,5 @@ import java.util.List;
     private Owner owner;
     private List<Field> fields;
     private List<Worker> workers;
-    private List<Building> buildings;
+//    private List<Building> buildings;
 }

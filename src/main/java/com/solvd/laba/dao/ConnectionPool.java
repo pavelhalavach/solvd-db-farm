@@ -3,19 +3,16 @@ package com.solvd.laba.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ConnectionPool {
     private final int size = 5;
-    private final String url = "url";
-    private final String user = "user";
-    private final String password = "password";
-    private List<Connection> availableConnections;
-    private List<Connection> connectionsInUse;
+    private final String url = "jdbc:mysql://127.0.0.1:3306/farm";
+    private final String user = "root";
+    private final String password = "1152";
+    private LinkedList<Connection> availableConnections;
+    private LinkedList<Connection> connectionsInUse;
     private static ConnectionPool INSTANCE;
 
     public static ConnectionPool getInstance(){
@@ -27,19 +24,24 @@ public class ConnectionPool {
 
     public synchronized Connection getConnection() {
         if (availableConnections == null) {
-            availableConnections = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                try(java.sql.Connection con = DriverManager.getConnection(url, user, password)){
-                    availableConnections.add(con);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                initPool();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            connectionsInUse = new ArrayList<>();
         }
         Connection connection = availableConnections.removeLast();
         connectionsInUse.add(connection);
         return connection;
+    }
+
+    private void initPool() throws SQLException {
+        availableConnections = new LinkedList<>();
+        connectionsInUse = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            Connection con = DriverManager.getConnection(url, user, password);
+            availableConnections.add(con);
+        }
     }
 
     public synchronized void releaseConnection(){

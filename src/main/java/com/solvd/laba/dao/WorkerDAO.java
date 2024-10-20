@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface WorkerDAO {
     void insert(Worker worker, int farmId);
-    void update(Worker worker);
+    void update(Worker worker, int farmId);
     void deleteById(int id);
     Worker getById(int id);
     List<Worker> getAll();

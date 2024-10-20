@@ -21,6 +21,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    public void update(Owner owner) {
+        ownerDAO.update(owner);
+    }
+
+    @Override
     public void deleteById(int id) {
         ownerDAO.deleteById(id);
     }

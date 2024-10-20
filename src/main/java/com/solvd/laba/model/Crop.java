@@ -1,12 +1,14 @@
 package com.solvd.laba.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
-@Data public class Crop {
+@Data
+ public class Crop {
     private int id;
     private String name;
-    private LocalDate dateToSeed;
-    private LocalDate dateToHarvest;
+    private Date dateToSeed;
+    private Date dateToHarvest;
 }

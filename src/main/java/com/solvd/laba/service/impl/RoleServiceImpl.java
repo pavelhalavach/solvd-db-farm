@@ -1,6 +1,5 @@
 package com.solvd.laba.service.impl;
 
-import com.solvd.laba.dao.CropDAO;
 import com.solvd.laba.dao.RoleDAO;
 import com.solvd.laba.dao.impl.RoleDAOImpl;
 import com.solvd.laba.model.Role;
@@ -21,6 +20,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public void update(Role role){
+        roleDAO.update(role);
+    }
+
+    @Override
     public void deleteByProfession(String profession) {
         roleDAO.deleteByProfession(profession);
     }
@@ -28,6 +32,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getById(int id) throws NullPointerException{
         return roleDAO.getById(id);
+    }
+
+    @Override
+    public Role getByProfession(String profession) {
+        return roleDAO.getByProfession(profession);
     }
 
     @Override
