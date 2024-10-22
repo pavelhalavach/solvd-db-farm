@@ -58,10 +58,9 @@ DROP TABLE IF EXISTS fields;
 CREATE TABLE fields (
     id INT AUTO_INCREMENT PRIMARY KEY,
     area_in_acres DECIMAL(3,1),          
-    coordinates VARCHAR(225),
+    coordinates VARCHAR(225) UNIQUE,
     farm_id INT,
-    crop_id INT,
-    UNIQUE(area_in_acres, coordinates)
+    crop_id INT
 );
 
 DROP TABLE IF EXISTS crops;

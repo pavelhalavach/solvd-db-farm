@@ -1,0 +1,43 @@
+<farm id="1">
+    <name>Farmtastic Hills</name>
+    <location>Finland</location>
+    <owner id="1">
+        <first_name>Tim</first_name>
+        <second_name>Norten</second_name>
+    </owner>
+    <workers>
+        <worker id="1">
+            <first_name>Robert</first_name>
+            <second_name>Richy</second_name>
+            <responsibilities>
+                <responsibility id="1">
+                    <task>Collect honey</task>
+                    <description>Collect honey from 5 beehives</description>
+                    <role id="4">
+                        <profession>Beekeeper</profession>
+                    </role>
+                </responsibility>
+                <responsibility id="2">
+                    <task>Check animal health</task>
+                    <description>Weekly inspection</description>
+                    <role id="2">
+                        <profession>Vet</profession>
+                    </role>
+                </responsibility>
+            </responsibilities>
+        </worker>
+        <worker id="2">
+            <first_name>Bob</first_name>
+            <second_name>Gimly</second_name>
+            <responsibilities>
+                <responsibility id="3">
+                    <task>Seed the fields</task>
+                    <description>Seed the fields every season</description>
+                    <role id="3">
+                        <profession>Farmer</profession>
+                    </role>
+                </responsibility>
+            </responsibilities>
+        </worker>
+    </workers>
+</farm>
