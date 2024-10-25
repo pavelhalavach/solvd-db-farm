@@ -1,4 +1,4 @@
-package com.solvd.laba.xml;
+package com.solvd.laba.xmljson.xml;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -7,24 +7,38 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class XmlDOMParser {
     private static int index;
 
-    public static Node parse(File file){
+    public static Node parse(File xmlFile){
+//        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//        Schema schema = null;
+//        try {
+//            schema = factory.newSchema(xsdFile);
+//            Validator validator = schema.newValidator();
+//            validator.validate(new StreamSource(xmlFile));
+//        } catch (SAXException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
         String xml = null;
         try {
-            xml = FileUtils.readFileToString(file, Charset.defaultCharset());
+            xml = FileUtils.readFileToString(xmlFile, Charset.defaultCharset());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         index = 0;
+        if (xml.charAt(1) == '?') {
+            index = xml.indexOf('<', 1);
+        }
+
         return parseNode(xml);
     }
 
     private static Node parseNode(String xml){
+
+
         Node node = new Node();
         node.setAttributes(new HashMap<>());
         node.setChildren(new ArrayList<>());
@@ -62,10 +76,6 @@ public class XmlDOMParser {
 
     private static String getTextOrChild(String xml, Node node){
         String xmlWithoutWhihespaces = StringUtils.deleteWhitespace(xml.substring(index));
-//        if (xml2.isEmpty()) return null;
-//        if (xml2.charAt(0) == '<' && xml2.charAt(1) == '/'){
-//            return null;
-//        }
         if (xmlWithoutWhihespaces.charAt(0) != '<'){
             int end = xml.indexOf('<', index);
             String text = xml.substring(index, end);

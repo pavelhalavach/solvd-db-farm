@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<worker id="1">
+    <first_name>Robert</first_name>
+    <second_name>Richy</second_name>
+    <responsibilities>
+        <responsibility id="1">
+            <task>Collect honey</task>
+            <description>Collect honey from 5 beehives</description>
+            <role id="4">
+                <profession>Beekeeper</profession>
+            </role>
+        </responsibility>
+        <responsibility id="2">
+            <task>Check animal health</task>
+            <description>Weekly inspection</description>
+            <role id="2">
+                <profession>Vet</profession>
+            </role>
+        </responsibility>
+    </responsibilities>
+</worker>

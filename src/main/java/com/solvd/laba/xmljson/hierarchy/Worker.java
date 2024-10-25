@@ -1,15 +1,27 @@
-package com.solvd.laba.xml.hierarchy;
+package com.solvd.laba.xmljson.hierarchy;
 
-import com.solvd.laba.xml.Node;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.solvd.laba.xmljson.xml.Node;
+import jakarta.xml.bind.annotation.*;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//@XmlRootElement(name = "worker", namespace = "http://www.example.com/farm")
+@JsonPropertyOrder({ "worker_id", "firstName", "secondName", "responsibilities" })
+@XmlAccessorType(XmlAccessType.FIELD)
 @Data public class Worker {
+    @XmlAttribute
+    @JsonProperty(value = "workerId")
     private int id;
+    @XmlElement(name = "first_name")
     private String firstName;
+    @XmlElement(name = "second_name")
     private String secondName;
+    @XmlElementWrapper(name = "responsibilities")
+    @XmlElement(name = "responsibility")
     private List<Responsibility> responsibilities;
 
     public void mapWorker(Node node){

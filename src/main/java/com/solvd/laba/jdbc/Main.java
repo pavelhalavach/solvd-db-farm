@@ -68,7 +68,7 @@ public class Main {
 //        farmService.update(farm);
 //        System.out.println(farmService.getAll());
 //        System.out.println(farmService.getById(3));
-//        farmService.deleteById(1);
+        farmService.deleteById(1);
 //        System.out.println(farmService.getAll());
 
     }

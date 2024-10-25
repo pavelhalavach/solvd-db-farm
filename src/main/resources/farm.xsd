@@ -1,0 +1,59 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="farm" type="FarmType"/>
+
+    <xs:complexType name="FarmType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="location" type="xs:string"/>
+            <xs:element name="owner" type="OwnerType"/>
+            <xs:element name="workers" type="WorkersType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="OwnerType">
+        <xs:sequence>
+            <xs:element name="first_name" type="xs:string"/>
+            <xs:element name="second_name" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="WorkersType">
+        <xs:sequence>
+            <xs:element name="worker" type="WorkerType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WorkerType">
+        <xs:sequence>
+            <xs:element name="first_name" type="xs:string"/>
+            <xs:element name="second_name" type="xs:string"/>
+            <xs:element name="responsibilities" type="ResponsibilitiesType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ResponsibilitiesType">
+        <xs:sequence>
+            <xs:element name="responsibility" type="ResponsibilityType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ResponsibilityType">
+        <xs:sequence>
+            <xs:element name="task" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="role" type="RoleType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RoleType">
+        <xs:sequence>
+            <xs:element name="profession" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+</xs:schema>

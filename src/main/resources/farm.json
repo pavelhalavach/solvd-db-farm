@@ -1,0 +1,47 @@
+{
+  "farm" : {
+    "name" : "Farmtastic Hills",
+    "location" : "Finland",
+    "owner" : {
+      "firstName" : "Tim",
+      "secondName" : "Norten",
+      "ownerId" : 1
+    },
+    "workers" : [ {
+      "firstName" : "Robert",
+      "secondName" : "Richy",
+      "responsibilities" : [ {
+        "task" : "Collect honey",
+        "description" : "Collect honey from 5 beehives",
+        "role" : {
+          "profession" : "Beekeeper",
+          "roleId" : 4
+        },
+        "responsibilityId" : 1
+      }, {
+        "task" : "Check animal health",
+        "description" : "Weekly inspection",
+        "role" : {
+          "profession" : "Vet",
+          "roleId" : 2
+        },
+        "responsibilityId" : 2
+      } ],
+      "workerId" : 1
+    }, {
+      "firstName" : "Bob",
+      "secondName" : "Gimly",
+      "responsibilities" : [ {
+        "task" : "Seed the fields",
+        "description" : "Seed the fields every season",
+        "role" : {
+          "profession" : "Farmer",
+          "roleId" : 3
+        },
+        "responsibilityId" : 3
+      } ],
+      "workerId" : 2
+    } ],
+    "farmId" : 1
+  }
+}

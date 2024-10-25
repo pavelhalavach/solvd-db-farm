@@ -1,4 +1,4 @@
-package com.solvd.laba.xml;
+package com.solvd.laba.xmljson.xml;
 
 import lombok.Data;
 

@@ -1,19 +1,33 @@
-package com.solvd.laba.xml.hierarchy;
+package com.solvd.laba.xmljson.hierarchy;
 
-import com.solvd.laba.xml.Node;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.solvd.laba.xmljson.xml.Node;
+import jakarta.xml.bind.annotation.*;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement(name = "farm")
+@XmlAccessorType(XmlAccessType.FIELD)
+@JsonRootName(value = "farm")
+@JsonPropertyOrder({ "farm_id", "name", "location", "owner", "workers" })
 @Data public class Farm {
+    @XmlAttribute(name = "id")
+    @JsonProperty(value = "farmId")
     private int id;
+    @XmlElement(name = "name")
     private String name;
+    @XmlElement(name = "location")
     private String location;
+    @XmlElement(name = "owner")
     private Owner owner;
-//    private List<Field> fields;
+    @XmlElementWrapper(name = "workers")
+    @XmlElement(name = "worker")
     private List<Worker> workers;
-//    private List<Building> buildings;
+
 
     public void mapFarm(Node node){
         id = Integer.parseInt(node.getAttributes().get("id").replaceAll("\"",""));
@@ -46,3 +60,5 @@ import java.util.List;
 //                .filter(node2 -> node2.getChildren()).forEach(worker -> worker.ge);
     }
 }
+
+

@@ -1,13 +1,21 @@
-package com.solvd.laba.xml.hierarchy;
+package com.solvd.laba.xmljson.hierarchy;
 
-import com.solvd.laba.xml.Node;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.solvd.laba.xmljson.xml.Node;
+import jakarta.xml.bind.annotation.*;
 import lombok.*;
 
-import java.util.Objects;
-
+//@XmlRootElement(name = "owner", namespace = "http://www.example.com/farm")
+@XmlAccessorType(XmlAccessType.FIELD)
+@JsonPropertyOrder({ "owner_id", "firstName", "secondName"})
 @Data public class Owner {
+    @XmlAttribute
+    @JsonProperty(value = "ownerId")
     private int id;
+    @XmlElement(name = "first_name")
     private String firstName;
+    @XmlElement(name = "second_name")
     private String secondName;
 
     public void mapOwner(Node node) {
