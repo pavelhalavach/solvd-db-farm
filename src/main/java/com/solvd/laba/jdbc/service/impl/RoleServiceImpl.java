@@ -1,7 +1,7 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.RoleDAO;
-import com.solvd.laba.jdbc.dao.impl.RoleDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.RoleDAOImpl;
 import com.solvd.laba.jdbc.model.Role;
 import com.solvd.laba.jdbc.service.RoleService;
 

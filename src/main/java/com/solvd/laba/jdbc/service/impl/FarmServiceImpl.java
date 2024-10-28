@@ -1,7 +1,7 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.FarmDAO;
-import com.solvd.laba.jdbc.dao.impl.FarmDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.FarmDAOImpl;
 import com.solvd.laba.jdbc.model.*;
 import com.solvd.laba.jdbc.service.FarmService;
 import com.solvd.laba.jdbc.service.FieldService;

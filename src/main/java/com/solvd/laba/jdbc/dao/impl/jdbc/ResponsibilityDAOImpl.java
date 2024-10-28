@@ -1,9 +1,7 @@
-package com.solvd.laba.jdbc.dao.impl;
+package com.solvd.laba.jdbc.dao.impl.jdbc;
 
-import com.solvd.laba.jdbc.dao.ConnectionPool;
 import com.solvd.laba.jdbc.dao.ResponsibilityDAO;
 import com.solvd.laba.jdbc.model.Responsibility;
-import com.solvd.laba.jdbc.model.Worker;
 
 
 import java.sql.*;

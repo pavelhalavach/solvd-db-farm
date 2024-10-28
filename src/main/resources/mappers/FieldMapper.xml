@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.laba.jdbc.dao.FieldDAO">
+
+    <resultMap id="fieldResultMap" type="com.solvd.laba.jdbc.model.Field">
+        <id property="id" column="field_id"/>
+        <result property="areaInAcres" column="field_area_in_acres"/>
+        <result property="coordinates" column="field_coordinates"/>
+
+        <association property="crop" javaType="com.solvd.laba.jdbc.model.Crop">
+            <id property="id" column="crop_id"/>
+            <result property="name" column="crop_name"/>
+            <result property="dateToSeed" column="crop_seeding_date"/>
+            <result property="dateToHarvest" column="crop_harvesting_date"/>
+        </association>
+    </resultMap>
+
+    <select id="getById" resultMap="fieldResultMap">
+        SELECT
+            f.id AS field_id,
+            f.area_in_acres AS field_area_in_acres,
+            f.coordinates AS field_coordinates,
+            f.farm_id AS farm_id,
+            c.id AS crop_id,
+            c.name AS crop_name,
+            c.date_to_seed AS crop_seeding_date,
+            c.date_to_harvest AS crop_harvesting_date
+        FROM fields AS f
+        LEFT JOIN crops AS c ON f.crop_id = c.id
+        WHERE f.id = #{id}
+    </select>
+
+    <select id="getAllByFarmId" resultMap="fieldResultMap">
+        SELECT
+            f.id AS field_id,
+            f.area_in_acres AS field_area_in_acres,
+            f.coordinates AS field_coordinates,
+            f.farm_id AS farm_id,
+            c.id AS crop_id,
+            c.name AS crop_name,
+            c.date_to_seed AS crop_seeding_date,
+            c.date_to_harvest AS crop_harvesting_date
+        FROM fields AS f
+                 LEFT JOIN crops AS c ON f.crop_id = c.id
+        WHERE f.farm_id = #{farm_id}
+    </select>
+    
+    <insert id="insertField" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO fields (area_in_acres, coordinates, farm_id, crop_id)
+            VALUES (#{field.areaInAcres},#{field.coordinates},#{farmId},#{field.crop.id})
+            ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), farm_id = VALUES(farm_id), crop_id = VALUES(crop_id)
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM fields
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

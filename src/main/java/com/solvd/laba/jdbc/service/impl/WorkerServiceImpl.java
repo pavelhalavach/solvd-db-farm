@@ -1,7 +1,7 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.WorkerDAO;
-import com.solvd.laba.jdbc.dao.impl.WorkerDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.WorkerDAOImpl;
 import com.solvd.laba.jdbc.model.Responsibility;
 import com.solvd.laba.jdbc.model.Worker;
 import com.solvd.laba.jdbc.service.ResponsibilityService;

@@ -148,7 +148,8 @@ FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE fields
 ADD CONSTRAINT fk_crop_field
-FOREIGN KEY (crop_id) REFERENCES crops(id);
+FOREIGN KEY (crop_id) REFERENCES crops(id)
+ON DELETE SET NULL;
 
 ALTER TABLE buildings
 ADD CONSTRAINT fk_farm_building

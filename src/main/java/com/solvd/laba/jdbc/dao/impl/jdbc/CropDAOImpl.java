@@ -1,6 +1,5 @@
-package com.solvd.laba.jdbc.dao.impl;
+package com.solvd.laba.jdbc.dao.impl.jdbc;
 
-import com.solvd.laba.jdbc.dao.ConnectionPool;
 import com.solvd.laba.jdbc.dao.CropDAO;
 import com.solvd.laba.jdbc.model.Crop;
 
@@ -16,7 +15,7 @@ public class CropDAOImpl implements CropDAO {
             "VALUES (?,?,?) " +
             "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
     private static final String UPDATE = "UPDATE crops " +
-            "SET name = ?, date_to_seed = ?, date_to_harvest = ?" +
+            "SET name = ?, date_to_seed = ?, date_to_harvest = ? " +
             "WHERE id = ?";
     private static final String DELETE_BY_NAME = "DELETE FROM crops " +
             "WHERE name = ?";

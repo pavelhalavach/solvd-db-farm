@@ -3,6 +3,7 @@ package com.solvd.laba.jdbc.dao;
 import com.solvd.laba.jdbc.model.Crop;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CropDAO {
     void insert(Crop crop);
@@ -13,4 +14,5 @@ public interface CropDAO {
     Crop getByName(String name);
 
     List<Crop> getAll();
+
 }

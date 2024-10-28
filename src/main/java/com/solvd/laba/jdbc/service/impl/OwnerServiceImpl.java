@@ -1,7 +1,7 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.OwnerDAO;
-import com.solvd.laba.jdbc.dao.impl.OwnerDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.OwnerDAOImpl;
 import com.solvd.laba.jdbc.model.Owner;
 import com.solvd.laba.jdbc.service.OwnerService;
 

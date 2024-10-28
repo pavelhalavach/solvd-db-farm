@@ -1,10 +1,9 @@
-package com.solvd.laba.jdbc.dao;
+package com.solvd.laba.jdbc.dao.impl.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ConnectionPool {
     private final int size = 5;
