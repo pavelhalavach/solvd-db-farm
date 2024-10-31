@@ -1,12 +1,12 @@
-package com.solvd.laba.jdbc.dao.impl;
+package com.solvd.laba.jdbc.dao.impl.jdbc;
 
-import com.solvd.laba.jdbc.dao.ConnectionPool;
 import com.solvd.laba.jdbc.dao.FieldDAO;
 import com.solvd.laba.jdbc.model.Field;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FieldDAOImpl implements FieldDAO {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -115,6 +115,11 @@ public class FieldDAOImpl implements FieldDAO {
             connectionPool.releaseConnection();
         }
         return fields;
+    }
+
+    @Override
+    public void insertField(Map<String, Object> params) {
+
     }
 
     public static Field mapField(ResultSet resultSet) throws SQLException {

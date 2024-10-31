@@ -1,7 +1,8 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.CropDAO;
-import com.solvd.laba.jdbc.dao.impl.CropDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.CropDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.mybatis.CropMapperImpl;
 import com.solvd.laba.jdbc.model.Crop;
 import com.solvd.laba.jdbc.service.CropService;
 
@@ -12,7 +13,8 @@ public class CropServiceImpl implements CropService {
     private final CropDAO cropDAO;
 
     public CropServiceImpl() {
-        this.cropDAO = new CropDAOImpl();
+//        this.cropDAO = new CropDAOImpl();
+        this.cropDAO = new CropMapperImpl();
     }
 
     @Override

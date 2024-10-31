@@ -1,6 +1,5 @@
-package com.solvd.laba.jdbc.dao.impl;
+package com.solvd.laba.jdbc.dao.impl.jdbc;
 
-import com.solvd.laba.jdbc.dao.ConnectionPool;
 import com.solvd.laba.jdbc.dao.FarmDAO;
 import com.solvd.laba.jdbc.model.Farm;
 import com.solvd.laba.jdbc.model.Field;

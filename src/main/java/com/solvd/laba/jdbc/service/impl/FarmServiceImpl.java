@@ -1,7 +1,8 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.FarmDAO;
-import com.solvd.laba.jdbc.dao.impl.FarmDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.FarmDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.mybatis.FarmMapperImpl;
 import com.solvd.laba.jdbc.model.*;
 import com.solvd.laba.jdbc.service.FarmService;
 import com.solvd.laba.jdbc.service.FieldService;
@@ -17,7 +18,8 @@ public class FarmServiceImpl implements FarmService {
     private final OwnerService ownerService;
     
     public FarmServiceImpl() {
-        this.farmDAO = new FarmDAOImpl();
+//        this.farmDAO = new FarmDAOImpl();
+        this.farmDAO = new FarmMapperImpl();
         this.workerService = new WorkerServiceImpl();
         this.fieldService = new FieldServiceImpl();
         this.ownerService = new OwnerServiceImpl();

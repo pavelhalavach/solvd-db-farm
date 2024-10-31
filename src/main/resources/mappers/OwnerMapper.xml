@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.laba.jdbc.dao.OwnerDAO">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO owners (first_name, second_name)
+        VALUES (#{firstName},#{secondName})
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+    </insert>
+    <update id="update">
+        UPDATE owners SET first_name = #{firstName}, second_name = #{secondName}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM owners
+        WHERE id = #{id}
+    </delete>
+    <select id="getById" resultType="com.solvd.laba.jdbc.model.Owner">
+        SELECT
+            o.id AS id,
+            o.first_name AS firstName,
+            o.second_name AS secondName
+        FROM owners AS o
+        WHERE id = #{id}
+    </select>
+    <select id="getAll" resultType="com.solvd.laba.jdbc.model.Owner">
+        SELECT
+            o.id AS id,
+            o.first_name AS firstName,
+            o.second_name AS secondName
+        FROM owners AS o
+    </select>
+</mapper>

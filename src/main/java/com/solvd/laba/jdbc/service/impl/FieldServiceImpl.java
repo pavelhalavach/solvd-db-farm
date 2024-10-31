@@ -1,7 +1,8 @@
 package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.FieldDAO;
-import com.solvd.laba.jdbc.dao.impl.FieldDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.jdbc.FieldDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.mybatis.FieldMapperImpl;
 import com.solvd.laba.jdbc.model.Field;
 import com.solvd.laba.jdbc.service.CropService;
 import com.solvd.laba.jdbc.service.FieldService;
@@ -13,7 +14,8 @@ public class FieldServiceImpl implements FieldService {
     private final CropService cropService;
 
     public FieldServiceImpl(){
-        this.fieldDAO = new FieldDAOImpl();
+//        this.fieldDAO = new FieldDAOImpl();
+        this.fieldDAO = new FieldMapperImpl();
         this.cropService = new CropServiceImpl();
     }
 

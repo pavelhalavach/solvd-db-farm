@@ -34,7 +34,7 @@ CREATE TABLE responsibilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     task VARCHAR(45) NOT NULL,          
     description VARCHAR(225),
-    role_id INT NOT NULL,
+    role_id INT,
     UNIQUE(task, description, role_id)
 );
 
@@ -44,7 +44,7 @@ CREATE TABLE worker_responsibilities (
     worker_id INT,
     UNIQUE(responsibility_id, worker_id),
     PRIMARY KEY (responsibility_id, worker_id),
-    FOREIGN KEY (responsibility_id) REFERENCES responsibilities(id),
+    FOREIGN KEY (responsibility_id) REFERENCES responsibilities(id) ON DELETE CASCADE,
     FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE
 );
 
@@ -140,7 +140,8 @@ FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE responsibilities
 ADD CONSTRAINT fk_role_responsibility
-FOREIGN KEY (role_id) REFERENCES roles(id);
+FOREIGN KEY (role_id) REFERENCES roles(id) 
+ON DELETE SET NULL;
 
 ALTER TABLE fields
 ADD CONSTRAINT fk_farm_field
@@ -148,7 +149,8 @@ FOREIGN KEY (farm_id) REFERENCES farms(id) ON DELETE CASCADE;
 
 ALTER TABLE fields
 ADD CONSTRAINT fk_crop_field
-FOREIGN KEY (crop_id) REFERENCES crops(id);
+FOREIGN KEY (crop_id) REFERENCES crops(id)
+ON DELETE SET NULL;
 
 ALTER TABLE buildings
 ADD CONSTRAINT fk_farm_building
