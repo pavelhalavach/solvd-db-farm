@@ -2,6 +2,7 @@ package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.WorkerDAO;
 import com.solvd.laba.jdbc.dao.impl.jdbc.WorkerDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.mybatis.WorkerMapperImpl;
 import com.solvd.laba.jdbc.model.Responsibility;
 import com.solvd.laba.jdbc.model.Worker;
 import com.solvd.laba.jdbc.service.ResponsibilityService;
@@ -13,7 +14,8 @@ public class WorkerServiceImpl implements WorkerService {
     private final WorkerDAO workerDAO;
     private final ResponsibilityService responsibilityService;
     public WorkerServiceImpl() {
-        this.workerDAO = new WorkerDAOImpl();
+//        this.workerDAO = new WorkerDAOImpl();
+        this.workerDAO = new WorkerMapperImpl();
         this.responsibilityService = new ResponsibilityServiceImpl();
     }
 
@@ -25,8 +27,6 @@ public class WorkerServiceImpl implements WorkerService {
         workerDAO.insert(worker, farmId);
     }
 
-
-//    not working yet
     @Override
     public void update(Worker worker, int farmId) {
         if (getById(worker.getId()) != null) {
@@ -35,7 +35,6 @@ public class WorkerServiceImpl implements WorkerService {
             newResponsibilities.stream()
                     .filter(newRes -> !oldResponsibilities.contains(newRes))
                     .forEach(responsibilityService::insert);
-
             workerDAO.update(worker, farmId);
         }
     }

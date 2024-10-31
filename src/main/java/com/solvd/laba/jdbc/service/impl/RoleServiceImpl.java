@@ -2,6 +2,7 @@ package com.solvd.laba.jdbc.service.impl;
 
 import com.solvd.laba.jdbc.dao.RoleDAO;
 import com.solvd.laba.jdbc.dao.impl.jdbc.RoleDAOImpl;
+import com.solvd.laba.jdbc.dao.impl.mybatis.RoleMapperImpl;
 import com.solvd.laba.jdbc.model.Role;
 import com.solvd.laba.jdbc.service.RoleService;
 
@@ -11,7 +12,8 @@ public class RoleServiceImpl implements RoleService {
     private final RoleDAO roleDAO;
 
     public RoleServiceImpl() {
-        this.roleDAO = new RoleDAOImpl();
+//        this.roleDAO = new RoleDAOImpl();
+        this.roleDAO = new RoleMapperImpl();
     }
 
     @Override

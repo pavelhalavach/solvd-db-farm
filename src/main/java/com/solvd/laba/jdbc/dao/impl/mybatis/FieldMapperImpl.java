@@ -29,7 +29,6 @@ public class FieldMapperImpl implements FieldDAO {
     public void deleteById(int id) {
         try (SqlSession sqlSession = myBatisPool.getSqlSession()) {
             FieldDAO fieldDAO = sqlSession.getMapper(FieldDAO.class);
-            Map<String, Object> params = new HashMap<>();
             fieldDAO.deleteById(id);
             sqlSession.commit();
         }

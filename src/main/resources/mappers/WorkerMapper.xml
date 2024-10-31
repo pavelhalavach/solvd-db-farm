@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.laba.jdbc.dao.WorkerDAOMyBatis">
+
+    <resultMap id="workerResultMap" type="com.solvd.laba.jdbc.model.Worker">
+        <id property="id" column="worker_id"/>
+        <result property="firstName" column="worker_first_name"/>
+        <result property="secondName" column="worker_second_name"/>
+
+        <collection property="responsibilities" ofType="com.solvd.laba.jdbc.model.Responsibility">
+            <id property="id" column="responsibility_id"/>
+            <result property="task" column="responsibility_task"/>
+            <result property="description" column="responsibility_description"/>
+
+            <association property="role" javaType="com.solvd.laba.jdbc.model.Role">
+                <id property="id" column="role_id"/>
+                <result property="profession" column="role_profession"/>
+            </association>
+
+        </collection>
+    </resultMap>
+
+    <select id="getById" resultMap="workerResultMap">
+        SELECT
+            w.id AS worker_id,
+            w.first_name AS worker_first_name,
+            w.second_name AS worker_second_name,
+            w.farm_id AS farm_id,
+            wr.responsibility_id AS responsibility_id,
+            re.task AS responsibility_task,
+            re.description AS responsibility_description,
+            re.role_id AS role_id,
+            r.profession AS role_profession
+        FROM workers AS w
+        LEFT JOIN worker_responsibilities AS wr ON w.id = wr.worker_id
+        LEFT JOIN responsibilities AS re ON wr.responsibility_id = re.id
+        LEFT JOIN roles AS r ON re.role_id = r.id
+        WHERE w.id = #{id}
+    </select>
+
+    <select id="getAll" resultMap="workerResultMap">
+        SELECT
+            w.id AS worker_id,
+            w.first_name AS worker_first_name,
+            w.second_name AS worker_second_name,
+            w.farm_id AS farm_id,
+            wr.responsibility_id AS responsibility_id,
+            re.task AS responsibility_task,
+            re.description AS responsibility_description,
+            re.role_id AS role_id,
+            r.profession AS role_profession
+        FROM workers AS w
+        LEFT JOIN worker_responsibilities AS wr ON w.id = wr.worker_id
+        LEFT JOIN responsibilities AS re ON wr.responsibility_id = re.id
+        LEFT JOIN roles AS r ON re.role_id = r.id
+    </select>
+
+    <insert id="insertWorker" parameterType="map" useGeneratedKeys="true" keyProperty="worker.id">
+        INSERT INTO workers (first_name, second_name, farm_id)
+        VALUES (#{worker.firstName}, #{worker.secondName}, #{farmId})
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), farm_id = VALUES(farm_id);
+    </insert>
+
+    <insert id="insertDataToWorkerResponsibilities" parameterType="com.solvd.laba.jdbc.model.Worker">
+        INSERT IGNORE INTO worker_responsibilities (worker_id, responsibility_id)
+        VALUES
+        <foreach collection="responsibilities" item="responsibility" separator=",">
+            (#{id}, #{responsibility.id})
+        </foreach>
+    </insert>
+
+    <delete id="deleteDataFromWorkerResponsibilities" parameterType="com.solvd.laba.jdbc.model.Worker">
+        DELETE FROM worker_responsibilities
+        WHERE worker_id = #{id}
+<!--        AND responsibility_id NOT IN-->
+<!--        <foreach collection="responsibilities" item="responsibility" open="(" separator="," close=")">-->
+<!--            #{responsibility.id}-->
+<!--        </foreach>-->
+    </delete>
+
+    <update id="updateWorker" parameterType="map">
+        UPDATE workers SET
+            first_name = #{worker.firstName}, second_name = #{worker.secondName}, farm_id = #{farmId}
+        WHERE id = #{worker.id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM workers
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

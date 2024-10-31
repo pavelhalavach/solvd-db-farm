@@ -43,7 +43,7 @@
             c.date_to_seed AS crop_seeding_date,
             c.date_to_harvest AS crop_harvesting_date
         FROM fields AS f
-                 LEFT JOIN crops AS c ON f.crop_id = c.id
+        LEFT JOIN crops AS c ON f.crop_id = c.id
         WHERE f.farm_id = #{farm_id}
     </select>
     

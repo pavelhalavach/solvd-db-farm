@@ -17,5 +17,10 @@
     <mappers>
         <mapper resource="mappers/CropMapper.xml"/>
         <mapper resource="mappers/FieldMapper.xml"/>
+        <mapper resource="mappers/RoleMapper.xml"/>
+        <mapper resource="mappers/ResponsibilityMapper.xml"/>
+        <mapper resource="mappers/OwnerMapper.xml"/>
+        <mapper resource="mappers/WorkerMapper.xml"/>
+        <mapper resource="mappers/FarmMapper.xml"/>
     </mappers>
 </configuration>

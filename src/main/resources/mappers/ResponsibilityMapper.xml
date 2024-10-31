@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.laba.jdbc.dao.ResponsibilityDAO">
+
+    <resultMap id="responsibilityResultMap" type="com.solvd.laba.jdbc.model.Responsibility">
+        <id property="id" column="responsibility_id"/>
+        <result property="task" column="responsibility_task"/>
+        <result property="description" column="responsibility_description"/>
+
+        <association property="role" javaType="com.solvd.laba.jdbc.model.Role">
+            <id property="id" column="role_id"/>
+            <result property="profession" column="role_profession"/>
+        </association>
+    </resultMap>
+
+    <select id="getById" resultMap="responsibilityResultMap">
+        SELECT
+            re.id AS responsibility_id,
+            re.task as responsibility_task,
+            re.description AS responsibility_description,
+            re.role_id AS role_id,
+            r.profession AS role_profession
+        FROM responsibilities AS re
+        LEFT JOIN roles AS r ON role_id = r.id
+        WHERE re.id = #{id}
+    </select>
+
+    <select id="getAll" resultMap="responsibilityResultMap">
+        SELECT
+            re.id AS responsibility_id,
+            re.task as responsibility_task,
+            re.description AS responsibility_description,
+            re.role_id AS role_id,
+            r.profession AS role_profession
+        FROM responsibilities AS re
+        LEFT JOIN roles AS r ON role_id = r.id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO responsibilities (task, description, role_id)
+        VALUES (#{task},#{description},#{role.id})
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+    </insert>
+
+    <update id="update">
+        UPDATE responsibilities
+        SET task = #{task}, description = #{description}, role_id = #{role.id}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM responsibilities
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

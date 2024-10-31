@@ -7,6 +7,7 @@ import com.solvd.laba.jdbc.model.Worker;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WorkerDAOImpl implements WorkerDAO {     
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -75,7 +76,8 @@ public class WorkerDAOImpl implements WorkerDAO {
         }
     }
 
-    private void insertDataToWorkerResponsibilities(Worker worker){
+    @Override
+    public void insertDataToWorkerResponsibilities(Worker worker){
         if (worker.getResponsibilities() != null) {
             Connection connection = connectionPool.getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -116,7 +118,7 @@ public class WorkerDAOImpl implements WorkerDAO {
         }
     }
 
-    private void deleteDataFromWorkerResponsibilities(Worker worker){
+    public void deleteDataFromWorkerResponsibilities(Worker worker){
         Worker dbWorker = getById(worker.getId());
         if (dbWorker.getResponsibilities() != null) {
             Connection connection = connectionPool.getConnection();
